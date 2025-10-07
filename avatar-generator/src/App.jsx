@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import 'remixicon/fonts/remixicon.css'
 import 'animate.css';
 import img from './assets/img.png'
+import { toast, ToastContainer } from 'react-toastify';
 
 const data = [
   {
@@ -44,7 +45,7 @@ const data = [
 
 function App() {
   const [src, setSrc] = useState(null);
-  const [option, setOption] = useState("male");
+  const [option, setOption] = useState("illustration");
 
   const generate = () => {
     const obj = data.find((item)=> item.value === option);
@@ -72,13 +73,26 @@ function App() {
     setOption(value);
   }
 
+  const downloadAvatar = (url) => {
+    const a = document.createElement("a");
+      a.href = url;
+      a.download = `${Date.now()}.jpg`
+      a.click();
+      a.remove();
+  }
+  const copyLink = (url) => {
+    navigator.clipboard.writeText(url);
+    toast.success("Image URL copied",{position:"top-center"})
+
+  }
+
   useEffect(()=>{
     generate();
   },[option])
 
   return (
     <>
-      <div className='overflow-hidden animate__animated animate__fadeIn min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex justify-center items-center text-white'>
+      <div className='overflow-hidden animate__animated animate__fadeIn min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col justify-center items-center text-white'>
           <div className='animate__animated animate__zoomInDown animate__fast w-full border max-w-md rounded-2xl shadow-xl backdrop-blur-2xl border-slate-700 p-10 flex flex-col items-center'>
             <img 
             src={src || img}
@@ -101,11 +115,8 @@ function App() {
             </div>
 
             {/* links */}
-            <div className='bg-slate-900/60 w-full rounded-xl p-2 mt-2 border border-white/30'>
-              <input
-              type='text'
-              placeholder='links.com'
-              />
+            <div className='bg-slate-900/60 w-full rounded-xl p-2 mt-2 border border-white/30 '>
+              <p className='break-words'>{src}</p>
             </div>
 
            {/* buttons */}
@@ -115,12 +126,12 @@ function App() {
               Change
               </button>
 
-            <button className='flex-1 bg-gradient-to-r from-green-500 to-cyan-600 font-medium rounded-lg py-2 hover:scale-105 transition-transform p-2'>
+            <button onClick={()=>downloadAvatar(src)} className='flex-1 bg-gradient-to-r from-green-500 to-cyan-600 font-medium rounded-lg py-2 hover:scale-105 transition-transform p-2'>
               <i className="ri-download-line mr-1"></i>
               Download
               </button>
 
-              <button className='flex-1 bg-gradient-to-r from-orange-500 to-amber-600 font-medium rounded-lg py-2 hover:scale-105 transition-transform p-2'>
+              <button onClick={()=>copyLink(src)} className='flex-1 bg-gradient-to-r from-orange-500 to-amber-600 font-medium rounded-lg py-2 hover:scale-105 transition-transform p-2'>
               <i className="ri-file-copy-line mr-1"></i>
                 Copy
               </button>
@@ -128,6 +139,8 @@ function App() {
 
 
           </div>
+          <ToastContainer/>
+          <p className='animate__animated animate__flipInX text-[10px] text-neutral-400 mt-10'>Developed by Sharwan jung kunwar</p>
       </div>
     </>
   )
